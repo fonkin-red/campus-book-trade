@@ -17,14 +17,17 @@ CREATE TABLE `user` (
   `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `username` VARCHAR(50) NOT NULL COMMENT '登录账号',
   `password` VARCHAR(255) NOT NULL COMMENT '密码(BCrypt加密)',
+  `nickname` VARCHAR(50) DEFAULT NULL COMMENT '昵称/显示名',
   `phone` VARCHAR(11) DEFAULT NULL COMMENT '手机号',
+  `email` VARCHAR(100) DEFAULT NULL COMMENT '邮箱（用于密码找回）',
   `avatar` VARCHAR(255) DEFAULT NULL COMMENT '头像URL',
   `role` TINYINT DEFAULT 0 COMMENT '角色：0-普通用户，1-管理员',
   `status` TINYINT DEFAULT 1 COMMENT '状态：0-禁用，1-正常',
   `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '注册时间',
   `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_username` (`username`)
+  UNIQUE KEY `uk_username` (`username`),
+  UNIQUE KEY `uk_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 
 -- 默认管理员账号（用户名：admin  密码：admin123）
@@ -85,6 +88,7 @@ CREATE TABLE `cart` (
   `user_id` BIGINT NOT NULL COMMENT '用户ID',
   `book_id` BIGINT NOT NULL COMMENT '图书ID',
   `quantity` INT DEFAULT 1 COMMENT '数量',
+  `selected` TINYINT DEFAULT 1 COMMENT '是否选中：0-未选中，1-选中（用于结算勾选）',
   `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '加入时间',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_user_book` (`user_id`, `book_id`)
@@ -102,6 +106,8 @@ CREATE TABLE `order_info` (
   `book_price` DECIMAL(10,2) DEFAULT NULL COMMENT '快照：成交单价',
   `quantity` INT DEFAULT 1 COMMENT '数量',
   `total_amount` DECIMAL(10,2) NOT NULL COMMENT '总金额',
+  `contact_info` VARCHAR(100) DEFAULT NULL COMMENT '收货联系方式（手机/微信等）',
+  `delivery_address` VARCHAR(255) DEFAULT NULL COMMENT '收货地址（宿舍楼/教室等）',
   `status` TINYINT DEFAULT 0 COMMENT '状态：0-待付款，1-已付款待发货，2-已发货，3-已完成，4-已取消',
   `remark` VARCHAR(255) DEFAULT NULL COMMENT '买家备注',
   `payment_time` DATETIME DEFAULT NULL COMMENT '付款时间',
@@ -113,3 +119,29 @@ CREATE TABLE `order_info` (
   KEY `idx_buyer_id` (`buyer_id`),
   KEY `idx_seller_id` (`seller_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单表';
+
+-- 7. 收藏表
+DROP TABLE IF EXISTS `favorite`;
+CREATE TABLE `favorite` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '收藏ID',
+  `user_id` BIGINT NOT NULL COMMENT '用户ID',
+  `book_id` BIGINT NOT NULL COMMENT '图书ID',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '收藏时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_user_book` (`user_id`, `book_id`),
+  KEY `idx_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='收藏表';
+
+-- 8. 公告表
+DROP TABLE IF EXISTS `announcement`;
+CREATE TABLE `announcement` (
+  `id` INT NOT NULL AUTO_INCREMENT COMMENT '公告ID',
+  `title` VARCHAR(200) NOT NULL COMMENT '公告标题',
+  `content` TEXT NOT NULL COMMENT '公告内容',
+  `publisher_id` BIGINT DEFAULT NULL COMMENT '发布者ID（管理员）',
+  `is_pinned` TINYINT DEFAULT 0 COMMENT '是否置顶：0-否，1-是',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '发布时间',
+  `update_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_create_time` (`create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='公告表';
