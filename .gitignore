@@ -42,3 +42,5 @@ frontend/.env.local
 # 系统文件
 .DS_Store
 Thumbs.db
+
+.claude/

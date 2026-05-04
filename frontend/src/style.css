@@ -1,4 +1,4 @@
-/* ===== 全局基础样式重置 ===== */
+/* ===== 全局基础样式 ===== */
 *,
 *::before,
 *::after {
@@ -9,8 +9,9 @@
 
 body {
   font-family: 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  background: #f5f7fa;
-  color: #303133;
+  background: linear-gradient(135deg, #eef0f5 0%, #e8ecf1 50%, #f0f2f7 100%);
+  color: #2c3e50;
+  min-height: 100vh;
 }
 
 a {
@@ -18,9 +19,99 @@ a {
   color: inherit;
 }
 
-/* 通用页面容器，各页面可自行覆盖 */
+/* 通用页面容器 */
 .page-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 24px;
+}
+
+/* 全局滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #e8ecf1;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #667eea, #764ba2);
+  border-radius: 3px;
+}
+
+/* Element Plus 主题覆盖 */
+:root {
+  --el-color-primary: #667eea;
+  --el-color-primary-light-3: #8b9cf0;
+  --el-color-primary-light-5: #a4b2f4;
+  --el-color-primary-dark-2: #4e67d6;
+}
+
+/* 按钮圆角 */
+.el-button {
+  border-radius: 8px !important;
+}
+
+/* 卡片默认圆角 */
+.el-card {
+  border-radius: 12px !important;
+  border: none !important;
+  box-shadow: 0 2px 12px rgba(102, 126, 234, 0.08) !important;
+  overflow: hidden !important;
+}
+
+/* 输入框圆角 */
+.el-input__wrapper {
+  border-radius: 8px !important;
+}
+
+/* 选择器圆角 */
+.el-select .el-input__wrapper {
+  border-radius: 8px !important;
+}
+
+/* 表格圆角 */
+.el-table {
+  border-radius: 10px !important;
+  overflow: hidden !important;
+}
+.el-table__header-wrapper,
+.el-table__body-wrapper {
+  border-radius: 10px !important;
+}
+
+/* 对话框圆角 */
+.el-dialog {
+  border-radius: 14px !important;
+}
+.el-dialog__header {
+  border-radius: 14px 14px 0 0 !important;
+}
+
+.el-message-box {
+  border-radius: 14px !important;
+}
+
+/* 标签圆角 */
+.el-tag {
+  border-radius: 6px !important;
+}
+
+/* 抽屉圆角 */
+.el-drawer {
+  border-radius: 16px 0 0 16px !important;
+}
+
+/* 下拉菜单圆角 */
+.el-dropdown-menu {
+  border-radius: 10px !important;
+}
+
+/* 弹出框圆角 */
+.el-popover {
+  border-radius: 10px !important;
+}
+
+/* 步骤条圆角 */
+.el-steps {
+  border-radius: 10px !important;
 }
