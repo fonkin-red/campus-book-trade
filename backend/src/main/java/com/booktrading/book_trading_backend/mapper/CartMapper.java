@@ -8,7 +8,11 @@ import java.util.List;
 @Mapper
 public interface CartMapper {
 
-    @Select("SELECT c.* FROM cart c WHERE c.user_id = #{userId}")
+    @Select("SELECT c.*, b.title as bookName, b.cover_image as cover, b.price " +
+            "FROM cart c " +
+            "LEFT JOIN book b ON c.book_id = b.id " +
+            "WHERE c.user_id = #{userId} " +
+            "ORDER BY c.create_time DESC")
     List<Cart> selectByUserId(Long userId);
 
     @Select("SELECT * FROM cart WHERE id = #{id}")
