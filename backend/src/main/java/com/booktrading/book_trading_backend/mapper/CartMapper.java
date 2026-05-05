@@ -11,6 +11,9 @@ public interface CartMapper {
     @Select("SELECT c.* FROM cart c WHERE c.user_id = #{userId}")
     List<Cart> selectByUserId(Long userId);
 
+    @Select("SELECT * FROM cart WHERE id = #{id}")
+    Cart selectById(Long id);
+
     @Select("SELECT * FROM cart WHERE user_id = #{userId} AND book_id = #{bookId}")
     Cart selectByUserAndBook(@Param("userId") Long userId, @Param("bookId") Long bookId);
 
