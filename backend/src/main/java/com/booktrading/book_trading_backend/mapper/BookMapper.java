@@ -17,7 +17,7 @@ public interface BookMapper {
     @Select("SELECT * FROM book WHERE category_id = #{categoryId} AND status = 1 ORDER BY create_time DESC")
     List<Book> selectByCategory(Integer categoryId);
 
-    @Select("SELECT * FROM book WHERE seller_id = #{sellerId} ORDER BY create_time DESC")
+    @Select("SELECT * FROM book WHERE seller_id = #{sellerId} AND status != 0 ORDER BY create_time DESC")
     List<Book> selectBySeller(Long sellerId);
 
     @Select("SELECT * FROM book WHERE (title LIKE CONCAT('%',#{keyword},'%') OR author LIKE CONCAT('%',#{keyword},'%')) AND status = 1")

@@ -1,15 +1,22 @@
 package com.booktrading.book_trading_backend.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
     private final LoginInterceptor loginInterceptor;
+
+    @Value("${file.upload-dir:uploads}")
+    private String uploadDir;
 
     public WebConfig(LoginInterceptor loginInterceptor) {
         this.loginInterceptor = loginInterceptor;
@@ -33,7 +40,7 @@ public class WebConfig implements WebMvcConfigurer {
                         "/user/register",
                         "/book/list",
                         "/book/search",
-                        "/book/*",        // GET /book/{id}
+                        "/upload",               // 文件上传
                         "/category/**",
                         "/announcement/**",
                         "/uploads/**",
@@ -43,7 +50,9 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        Path absPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        String location = absPath.toUri().toString();
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:uploads/");
+                .addResourceLocations(location);
     }
 }

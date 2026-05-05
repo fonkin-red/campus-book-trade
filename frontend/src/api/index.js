@@ -39,13 +39,18 @@ export const removeFavorite = (bookId) => request.delete(`/favorite/${bookId}`)
 export const getAnnouncements = () => request.get('/announcement/list')
 
 // ===== 文件上传 =====
-export const uploadFile = (file) => {
+export const uploadFile = (file, onProgress) => {
   const formData = new FormData()
   formData.append('file', file)
   return request.post('/upload', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    onUploadProgress: onProgress ? (e) => {
+      const pct = e.total ? Math.round((e.loaded / e.total) * 100) : 0
+      onProgress(pct)
+    } : undefined
   })
 }
+
+export const deleteFile = (filename) => request.delete('/file', { params: { filename } })
 
 // ===== 管理员相关 =====
 export const getAdminUsers = (params) => request.get('/admin/users', { params })

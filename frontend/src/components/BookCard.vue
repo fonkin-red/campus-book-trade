@@ -18,7 +18,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 
-defineProps({ book: { type: Object, required: true } })
+const props = defineProps({ book: { type: Object, required: true } })
 const router = useRouter()
 
 const defaultCover = 'data:image/svg+xml,' + encodeURIComponent(

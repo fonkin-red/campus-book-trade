@@ -5,12 +5,14 @@ import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
 
     private final JwtUtil jwtUtil;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     public LoginInterceptor(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
@@ -19,6 +21,10 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         if ("OPTIONS".equals(request.getMethod())) {
+            return true;
+        }
+        // 放行 GET /book/{id}（图书详情允许匿名访问）
+        if ("GET".equals(request.getMethod()) && pathMatcher.match("/book/*", request.getRequestURI())) {
             return true;
         }
         String authHeader = request.getHeader("Authorization");

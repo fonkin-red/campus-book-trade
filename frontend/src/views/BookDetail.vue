@@ -3,7 +3,18 @@
     <el-row :gutter="30" v-if="book">
       <el-col :span="10">
         <div class="cover-box">
-          <img :src="book.coverImage || defaultCover" :alt="book.title" />
+          <div class="carousel-container" v-if="allImages.length">
+            <el-image :src="currentImage" fit="contain" class="carousel-image"
+              :preview-src-list="allImages" hide-on-click-modal preview-teleported />
+            <div class="carousel-arrow carousel-arrow-left" @click="prevImage">
+              <el-icon><ArrowLeft /></el-icon>
+            </div>
+            <div class="carousel-arrow carousel-arrow-right" @click="nextImage">
+              <el-icon><ArrowRight /></el-icon>
+            </div>
+          </div>
+          <img v-else :src="defaultCover" :alt="book.title" class="fallback-img" />
+          <div class="carousel-indicator">{{ currentIndex + 1 }} / {{ allImages.length || 1 }}</div>
         </div>
       </el-col>
       <el-col :span="14">
@@ -31,9 +42,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
 import { getBookDetail, addToCart, addFavorite, removeFavorite } from '@/api'
 
 const route = useRoute()
@@ -41,6 +53,30 @@ const router = useRouter()
 const book = ref(null)
 const loading = ref(true)
 const isFav = ref(false)
+const currentIndex = ref(0)
+
+const allImages = computed(() => {
+  if (!book.value) return []
+  const list = [book.value.coverImage]
+  if (book.value.images) {
+    list.push(...book.value.images.split(',').filter(Boolean))
+  }
+  return list.filter(Boolean)
+})
+
+const currentImage = computed(() => allImages.value[currentIndex.value])
+
+const prevImage = () => {
+  const len = allImages.value.length
+  if (!len) return
+  currentIndex.value = (currentIndex.value - 1 + len) % len
+}
+
+const nextImage = () => {
+  const len = allImages.value.length
+  if (!len) return
+  currentIndex.value = (currentIndex.value + 1) % len
+}
 
 const defaultCover = 'data:image/svg+xml,' + encodeURIComponent(
   '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="400" fill="#dcdfe6"><rect width="300" height="400"/><text x="150" y="200" text-anchor="middle" fill="#909399" font-size="18">暂无封面</text></svg>'
@@ -51,6 +87,7 @@ onMounted(async () => {
   try {
     const res = await getBookDetail(route.params.id)
     book.value = res.data
+    currentIndex.value = 0
   } finally { loading.value = false }
 })
 
@@ -78,7 +115,14 @@ const toggleFav = async () => {
 
 <style scoped>
 .cover-box { border-radius: 12px; overflow: hidden; background: #f0f2f5; box-shadow: 0 2px 12px rgba(102, 126, 234, 0.08); }
-.cover-box img { width: 100%; display: block; }
+.carousel-container { position: relative; width: 100%; aspect-ratio: 3 / 4; display: flex; align-items: center; justify-content: center; background: #f0f2f5; }
+.carousel-image { max-width: 100%; max-height: 100%; }
+.carousel-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 50%; background: rgba(0, 0, 0, 0.45); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; z-index: 2; font-size: 18px; user-select: none; }
+.carousel-arrow:hover { background: rgba(0, 0, 0, 0.7); }
+.carousel-arrow-left { left: 8px; }
+.carousel-arrow-right { right: 8px; }
+.carousel-indicator { text-align: center; padding: 10px 0 8px; font-size: 13px; color: #909399; font-weight: 500; }
+.fallback-img { width: 100%; display: block; }
 .title { font-size: 22px; margin-bottom: 12px; }
 .author { color: #606266; margin-bottom: 6px; }
 .price-row { display: flex; align-items: center; gap: 12px; margin: 20px 0; }

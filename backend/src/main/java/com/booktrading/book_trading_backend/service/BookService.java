@@ -75,10 +75,14 @@ public class BookService {
 
     public void delete(Long id, Long userId) {
         Book book = bookMapper.selectById(id);
-        if (book == null || !book.getSellerId().equals(userId)) {
-            throw new RuntimeException("无权删除");
+        if (book == null) {
+            throw new RuntimeException("无权删除（图书不存在）");
         }
-        bookMapper.deleteById(id);
+        if (!book.getSellerId().equals(userId)) {
+            throw new RuntimeException("无权删除（sellerId=" + book.getSellerId() + ", userId=" + userId + "）");
+        }
+        book.setStatus(0);
+        bookMapper.updateById(book);
     }
 
     public List<Book> listBySeller(Long sellerId) {
