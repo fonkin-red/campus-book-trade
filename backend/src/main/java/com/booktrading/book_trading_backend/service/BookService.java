@@ -3,14 +3,26 @@ package com.booktrading.book_trading_backend.service;
 import com.booktrading.book_trading_backend.dto.BookRequest;
 import com.booktrading.book_trading_backend.entity.Book;
 import com.booktrading.book_trading_backend.mapper.BookMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Service
 public class BookService {
 
+    private static final Logger log = LoggerFactory.getLogger(BookService.class);
+
     private final BookMapper bookMapper;
+
+    @Value("${file.upload-dir:uploads}")
+    private String uploadDir;
 
     public BookService(BookMapper bookMapper) {
         this.bookMapper = bookMapper;
@@ -81,8 +93,28 @@ public class BookService {
         if (!book.getSellerId().equals(userId)) {
             throw new RuntimeException("无权删除（sellerId=" + book.getSellerId() + ", userId=" + userId + "）");
         }
+        // 删除关联的封面图片文件
+        deleteFile(book.getCoverImage());
+        // 删除关联的附加图片文件
+        if (book.getImages() != null && !book.getImages().isEmpty()) {
+            for (String url : book.getImages().split(",")) {
+                deleteFile(url.trim());
+            }
+        }
         book.setStatus(0);
         bookMapper.updateById(book);
+    }
+
+    private void deleteFile(String url) {
+        if (url == null || url.isEmpty()) return;
+        try {
+            String filename = Paths.get(url).getFileName().toString();
+            Path filePath = Paths.get(uploadDir).toAbsolutePath().normalize().resolve(filename);
+            Files.deleteIfExists(filePath);
+            log.info("已清理文件: {}", filename);
+        } catch (IOException e) {
+            log.warn("清理文件失败: {}", url, e);
+        }
     }
 
     public List<Book> listBySeller(Long sellerId) {
