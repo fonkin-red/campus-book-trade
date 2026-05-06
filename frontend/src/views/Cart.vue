@@ -9,7 +9,7 @@
     <div v-else class="cart-container">
       <!-- 全选 -->
       <div class="cart-header">
-        <el-checkbox v-model="selectAll" @change="handleSelectAll">全选</el-checkbox>
+        <el-checkbox :model-value="selectAll" @change="handleSelectAll">全选</el-checkbox>
       </div>
 
       <!-- 商品列表 -->
@@ -89,10 +89,9 @@ const loadCart = async () => {
 onMounted(() => loadCart())
 
 // ===== 全选 =====
-const selectAll = computed({
-  get: () => cartItems.value.length > 0 && cartItems.value.every(item => item.selected === 1),
-  set: (val) => {}
-})
+const selectAll = computed(() =>
+  cartItems.value.length > 0 && cartItems.value.every(item => item.selected === 1)
+)
 
 const handleSelectAll = (val) => {
   cartItems.value.forEach(item => {
