@@ -1,7 +1,6 @@
 package com.booktrading.book_trading_backend.controller;
 
 import com.booktrading.book_trading_backend.dto.Result;
-import com.booktrading.book_trading_backend.entity.Announcement;
 import com.booktrading.book_trading_backend.service.AnnouncementService;
 import org.springframework.web.bind.annotation.*;
 
