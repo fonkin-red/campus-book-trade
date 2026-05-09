@@ -30,8 +30,8 @@ public class BookService {
 
     public Book getById(Long id) {
         Book book = bookMapper.selectById(id);
-        if (book == null) {
-            throw new RuntimeException("图书不存在");
+        if (book == null || book.getStatus() == 0) {
+            throw new RuntimeException("图书不存在或已下架");
         }
         bookMapper.incrementViewCount(id);
         return book;

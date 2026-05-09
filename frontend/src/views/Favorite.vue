@@ -1,5 +1,5 @@
 <template>
-  <div class="page-container">
+  <div class="page-container" v-loading="loading">
     <h2>我的收藏</h2>
 
     <el-empty v-if="!loading && !favorites.length" description="还没有收藏图书，去逛逛吧" />
@@ -11,6 +11,7 @@
           :src="item.coverImage"
           class="favorite-cover"
           fit="cover"
+          lazy
         />
         <div v-else class="favorite-cover placeholder">
           <span>暂无封面</span>
@@ -63,11 +64,15 @@ onMounted(() => loadFavorites())
 const handleRemove = async (bookId) => {
   try {
     await ElMessageBox.confirm('确定取消收藏？', '提示', { type: 'warning' })
+  } catch {
+    return // 用户取消
+  }
+  try {
     await removeFavorite(bookId)
     ElMessage.success('已取消收藏')
     await loadFavorites()
   } catch {
-    // 取消操作
+    ElMessage.error('取消收藏失败')
   }
 }
 </script>

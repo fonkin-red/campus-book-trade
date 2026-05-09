@@ -25,6 +25,15 @@ public class FavoriteController {
     }
 
     /**
+     * 检查是否已收藏
+     */
+    @GetMapping("/check/{bookId}")
+    public Result<?> check(@PathVariable Long bookId, HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        return Result.ok(favoriteService.isFavorited(userId, bookId));
+    }
+
+    /**
      * 收藏图书
      */
     @PostMapping("/{bookId}")

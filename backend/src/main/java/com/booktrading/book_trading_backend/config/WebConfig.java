@@ -40,7 +40,6 @@ public class WebConfig implements WebMvcConfigurer {
                         "/user/register",
                         "/book/list",
                         "/book/search",
-                        "/upload",               // 文件上传
                         "/category/**",
                         "/announcement/**",
                         "/uploads/**",

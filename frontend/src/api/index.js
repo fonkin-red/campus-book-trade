@@ -32,6 +32,7 @@ export const cancelOrder = (id) => request.put(`/order/${id}/cancel`)
 
 // ===== 收藏相关 =====
 export const getFavorites = () => request.get('/favorite')
+export const checkFavorite = (bookId) => request.get(`/favorite/check/${bookId}`)
 export const addFavorite = (bookId) => request.post(`/favorite/${bookId}`)
 export const removeFavorite = (bookId) => request.delete(`/favorite/${bookId}`)
 

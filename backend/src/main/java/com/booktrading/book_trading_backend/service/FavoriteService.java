@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 @Service
 public class FavoriteService {
@@ -24,14 +26,24 @@ public class FavoriteService {
     }
 
     /**
-     * 获取用户收藏列表，关联查询图书信息
+     * 获取用户收藏列表，关联查询图书信息（批量查询优化）
      */
     public List<Map<String, Object>> getFavorites(Long userId) {
         List<Favorite> favorites = favoriteMapper.selectByUserId(userId);
-        List<Map<String, Object>> result = new ArrayList<>();
+        if (favorites.isEmpty()) {
+            return Collections.emptyList();
+        }
 
+        List<Long> bookIds = favorites.stream()
+                .map(Favorite::getBookId)
+                .collect(Collectors.toList());
+        List<Book> books = bookMapper.selectByIds(bookIds);
+        Map<Long, Book> bookMap = books.stream()
+                .collect(Collectors.toMap(Book::getId, b -> b));
+
+        List<Map<String, Object>> result = new ArrayList<>();
         for (Favorite favorite : favorites) {
-            Book book = bookMapper.selectById(favorite.getBookId());
+            Book book = bookMap.get(favorite.getBookId());
             if (book != null) {
                 Map<String, Object> item = new HashMap<>();
                 item.put("id", favorite.getId());
@@ -52,10 +64,10 @@ public class FavoriteService {
      * 添加收藏
      */
     public void addFavorite(Long userId, Long bookId) {
-        // 检查图书是否存在
+        // 检查图书是否存在且未下架
         Book book = bookMapper.selectById(bookId);
-        if (book == null) {
-            throw new RuntimeException("图书不存在");
+        if (book == null || book.getStatus() == 0) {
+            throw new RuntimeException("图书不存在或已下架");
         }
 
         // 检查是否已经收藏
@@ -70,6 +82,13 @@ public class FavoriteService {
         favorite.setBookId(bookId);
         favorite.setCreateTime(LocalDateTime.now());
         favoriteMapper.insert(favorite);
+    }
+
+    /**
+     * 检查是否已收藏
+     */
+    public boolean isFavorited(Long userId, Long bookId) {
+        return favoriteMapper.selectByUserAndBook(userId, bookId) != null;
     }
 
     /**

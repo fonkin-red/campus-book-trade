@@ -46,7 +46,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
-import { getBookDetail, addToCart, addFavorite, removeFavorite } from '@/api'
+import { getBookDetail, addToCart, checkFavorite, addFavorite, removeFavorite } from '@/api'
 
 const route = useRoute()
 const router = useRouter()
@@ -88,6 +88,10 @@ onMounted(async () => {
     const res = await getBookDetail(route.params.id)
     book.value = res.data
     currentIndex.value = 0
+    if (localStorage.getItem('token')) {
+      const favRes = await checkFavorite(route.params.id)
+      isFav.value = favRes.data === true
+    }
   } finally { loading.value = false }
 })
 
@@ -103,12 +107,18 @@ const addCart = async () => {
 }
 const toggleFav = async () => {
   if (!localStorage.getItem('token')) return router.push('/login')
-  if (isFav.value) {
-    await removeFavorite(book.value.id)
-    isFav.value = false
-  } else {
-    await addFavorite(book.value.id)
-    isFav.value = true
+  try {
+    if (isFav.value) {
+      await removeFavorite(book.value.id)
+      isFav.value = false
+      ElMessage.success('已取消收藏')
+    } else {
+      await addFavorite(book.value.id)
+      isFav.value = true
+      ElMessage.success('收藏成功')
+    }
+  } catch {
+    // 收藏状态不变，错误消息由拦截器统一提示
   }
 }
 </script>

@@ -11,6 +11,9 @@ public interface BookMapper {
     @Select("SELECT * FROM book WHERE id = #{id}")
     Book selectById(Long id);
 
+    @Select("<script>SELECT * FROM book WHERE id IN <foreach collection='ids' item='id' open='(' separator=',' close=')'>#{id}</foreach></script>")
+    List<Book> selectByIds(@Param("ids") List<Long> ids);
+
     @Select("SELECT * FROM book WHERE status = 1 ORDER BY create_time DESC")
     List<Book> selectAllOnSale();
 
