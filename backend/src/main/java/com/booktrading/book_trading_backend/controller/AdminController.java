@@ -92,7 +92,7 @@ public class AdminController {
         return Result.ok(orderMapper.selectAll());
     }
 
-    /** 发货（复用 OrderController 的逻辑，这里简化处理） */
+    /** 发货（管理员） */
     @PutMapping("/orders/{id}/ship")
     public Result<?> shipOrder(@PathVariable Long id) {
         orderMapper.updateStatusOnly(id, 2);
@@ -110,7 +110,7 @@ public class AdminController {
     /** 发布公告 */
     @PostMapping("/announcement")
     public Result<?> publishAnnouncement(@RequestBody Announcement announcement,
-                                         HttpServletRequest request) {
+                                          HttpServletRequest request) {
         Long publisherId = (Long) request.getAttribute("userId");
         return Result.ok(announcementService.publish(announcement, publisherId));
     }
@@ -118,7 +118,7 @@ public class AdminController {
     /** 更新公告 */
     @PutMapping("/announcement/{id}")
     public Result<?> updateAnnouncement(@PathVariable Integer id,
-                                        @RequestBody Announcement announcement) {
+                                         @RequestBody Announcement announcement) {
         try {
             announcementService.update(id, announcement);
             return Result.ok();

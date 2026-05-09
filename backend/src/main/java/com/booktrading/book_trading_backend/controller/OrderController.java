@@ -2,15 +2,9 @@ package com.booktrading.book_trading_backend.controller;
 
 import com.booktrading.book_trading_backend.dto.OrderRequest;
 import com.booktrading.book_trading_backend.dto.Result;
-import com.booktrading.book_trading_backend.entity.OrderInfo;
 import com.booktrading.book_trading_backend.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/order")
@@ -33,25 +27,11 @@ public class OrderController {
         }
     }
 
-    /** 订单列表（同时查询买家和卖家订单） */
+    /** 订单列表 */
     @GetMapping("/list")
     public Result<?> list(HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
-        List<OrderInfo> buyerOrders = orderService.listByBuyer(userId);
-        List<OrderInfo> sellerOrders = orderService.listBySeller(userId);
-
-        // 合并去重，按创建时间倒序
-        Map<Long, OrderInfo> map = new LinkedHashMap<>();
-        for (OrderInfo o : buyerOrders) {
-            map.put(o.getId(), o);
-        }
-        for (OrderInfo o : sellerOrders) {
-            map.putIfAbsent(o.getId(), o);
-        }
-        List<OrderInfo> allOrders = new ArrayList<>(map.values());
-        allOrders.sort((a, b) -> b.getCreateTime().compareTo(a.getCreateTime()));
-
-        return Result.ok(allOrders);
+        return Result.ok(orderService.listByBuyer(userId));
     }
 
     /** 订单详情 */
