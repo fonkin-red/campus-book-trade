@@ -1,17 +1,19 @@
 package com.booktrading.book_trading_backend.controller;
 
-import com.booktrading.book_trading_backend.common.Result;
+import com.booktrading.book_trading_backend.dto.Result;
 import com.booktrading.book_trading_backend.service.FavoriteService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/favorite")
 public class FavoriteController {
 
-    @Autowired
-    private FavoriteService favoriteService;
+    private final FavoriteService favoriteService;
+
+    public FavoriteController(FavoriteService favoriteService) {
+        this.favoriteService = favoriteService;
+    }
 
     /**
      * 获取我的收藏列表

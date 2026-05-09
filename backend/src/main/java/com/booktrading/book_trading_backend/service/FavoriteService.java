@@ -4,11 +4,10 @@ import com.booktrading.book_trading_backend.entity.Favorite;
 import com.booktrading.book_trading_backend.entity.Book;
 import com.booktrading.book_trading_backend.mapper.FavoriteMapper;
 import com.booktrading.book_trading_backend.mapper.BookMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -16,11 +15,13 @@ import java.util.HashMap;
 @Service
 public class FavoriteService {
 
-    @Autowired
-    private FavoriteMapper favoriteMapper;
+    private final FavoriteMapper favoriteMapper;
+    private final BookMapper bookMapper;
 
-    @Autowired
-    private BookMapper bookMapper;
+    public FavoriteService(FavoriteMapper favoriteMapper, BookMapper bookMapper) {
+        this.favoriteMapper = favoriteMapper;
+        this.bookMapper = bookMapper;
+    }
 
     /**
      * 获取用户收藏列表，关联查询图书信息
@@ -67,7 +68,7 @@ public class FavoriteService {
         Favorite favorite = new Favorite();
         favorite.setUserId(userId);
         favorite.setBookId(bookId);
-        favorite.setCreateTime(new Date());
+        favorite.setCreateTime(LocalDateTime.now());
         favoriteMapper.insert(favorite);
     }
 
