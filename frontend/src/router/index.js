@@ -41,6 +41,12 @@ const routes = [
     component: () => import('@/views/Orders.vue')
   },
   {
+    path: '/favorites',
+    name: 'Favorites',
+    meta: { requiresAuth: true },
+    component: () => import('@/views/Favorite.vue')
+  },
+  {
     path: '/user',
     name: 'UserCenter',
     meta: { requiresAuth: true },

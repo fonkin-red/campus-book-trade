@@ -1,6 +1,29 @@
 <template>
   <div class="page-container">
     <h2>个人中心</h2>
+
+    <!-- 快捷入口 -->
+    <el-row :gutter="24" style="margin-bottom:20px">
+      <el-col :span="6">
+        <el-card shadow="hover" class="quick-entry" @click="$router.push('/cart')">
+          <el-icon :size="24"><ShoppingCart /></el-icon>
+          <span>购物车</span>
+        </el-card>
+      </el-col>
+      <el-col :span="6">
+        <el-card shadow="hover" class="quick-entry" @click="$router.push('/orders')">
+          <el-icon :size="24"><Document /></el-icon>
+          <span>我的订单</span>
+        </el-card>
+      </el-col>
+      <el-col :span="6">
+        <el-card shadow="hover" class="quick-entry" @click="$router.push('/favorites')">
+          <el-icon :size="24"><Star /></el-icon>
+          <span>我的收藏</span>
+        </el-card>
+      </el-col>
+    </el-row>
+
     <el-row :gutter="24" style="margin-top:20px">
       <el-col :span="8">
         <el-card>
@@ -59,6 +82,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import { ShoppingCart, Document, Star } from '@element-plus/icons-vue'
 import { getUserInfo, updateUser, getBookList, deleteBook as delBookApi } from '@/api'
 import { useUserStore } from '@/stores/user'
 
@@ -94,3 +118,22 @@ const delBook = async (id) => {
   ElMessage.success('已删除')
 }
 </script>
+
+<style scoped>
+.quick-entry {
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.2s;
+}
+.quick-entry:hover {
+  transform: translateY(-3px);
+}
+.quick-entry .el-icon {
+  display: block;
+  margin: 0 auto 8px;
+}
+.quick-entry span {
+  font-size: 14px;
+  color: #303133;
+}
+</style>
