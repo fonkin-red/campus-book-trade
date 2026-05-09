@@ -26,13 +26,9 @@
         <div class="order-footer">
           <span class="order-time">{{ order.createTime }}</span>
           <div class="order-actions">
-            <!-- 付款：只有买家能看到 -->
-            <el-button v-if="order.status === 0 && !isSeller(order)" type="primary" size="small" @click="handlePay(order.id)">付款</el-button>
-            <!-- 发货：只有卖家能看到 -->
+            <el-button v-if="order.status === 0" type="primary" size="small" @click="handlePay(order.id)">付款</el-button>
             <el-button v-if="order.status === 1 && isSeller(order)" type="primary" size="small" @click="handleShip(order.id)">发货</el-button>
-            <!-- 确认收货：只有买家能看到 -->
-            <el-button v-if="order.status === 2 && !isSeller(order)" type="success" size="small" @click="handleConfirm(order.id)">确认收货</el-button>
-            <!-- 取消：双方都能看到（未完成状态） -->
+            <el-button v-if="order.status === 2" type="success" size="small" @click="handleConfirm(order.id)">确认收货</el-button>
             <el-button v-if="order.status < 3" size="small" @click="handleCancel(order.id)">取消</el-button>
           </div>
         </div>
