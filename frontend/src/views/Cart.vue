@@ -151,7 +151,6 @@ const handleCheckout = async () => {
     ElMessage.warning('请先选择要购买的商品')
     return
   }
-  
   try {
     for (const item of selected) {
       await createOrder({
@@ -159,10 +158,15 @@ const handleCheckout = async () => {
         quantity: item.quantity
       })
     }
+    
+    for (const item of selected) {
+      await removeCartItem(item.id)
+    }
+  
     ElMessage.success('下单成功')
     router.push('/orders')
   } catch {
-    ElMessage.error('下单失败')
+    ElMessage.error('下单失败，请重试')
   }
 }
 </script>
