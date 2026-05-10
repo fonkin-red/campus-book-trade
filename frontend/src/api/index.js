@@ -25,10 +25,12 @@ export const removeCartItem = (id) => request.delete(`/cart/${id}`)
 
 // ===== 订单相关 =====
 export const getOrders = (params) => request.get('/order/list', { params })
+export const getSellerOrders = () => request.get('/order/seller/list')
 export const createOrder = (data) => request.post('/order', data)
 export const payOrder = (id) => request.put(`/order/${id}/pay`)
 export const confirmOrder = (id) => request.put(`/order/${id}/confirm`)
 export const cancelOrder = (id) => request.put(`/order/${id}/cancel`)
+export const shipOrder = (id) => request.put(`/order/${id}/ship`)
 
 // ===== 收藏相关 =====
 export const getFavorites = () => request.get('/favorite')
@@ -63,5 +65,5 @@ export const addCategory = (data) => request.post('/admin/category', data)
 export const updateCategory = (id, data) => request.put(`/admin/category/${id}`, data)
 export const deleteCategory = (id) => request.delete(`/admin/category/${id}`)
 export const getAdminOrders = (params) => request.get('/admin/orders', { params })
-export const shipOrder = (id) => request.put(`/order/${id}/ship`)
+export const adminShipOrder = (id) => request.put(`/admin/orders/${id}/ship`)
 // 公告相关已在上面声明，这里删除重复的即可

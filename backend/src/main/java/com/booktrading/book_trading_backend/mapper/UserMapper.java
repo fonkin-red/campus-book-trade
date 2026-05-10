@@ -29,6 +29,9 @@ public interface UserMapper {
             "email = #{email}, avatar = #{avatar}, status = #{status} WHERE id = #{id}")
     int updateById(User user);
 
+    @Update("UPDATE user SET nickname = #{nickname}, phone = #{phone}, email = #{email} WHERE id = #{id}")
+    int updateProfile(User user);
+
     @Delete("DELETE FROM user WHERE id = #{id}")
     int deleteById(Long id);
 }

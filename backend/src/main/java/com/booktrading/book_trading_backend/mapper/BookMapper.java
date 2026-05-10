@@ -20,6 +20,9 @@ public interface BookMapper {
     @Select("SELECT * FROM book WHERE category_id = #{categoryId} AND status = 1 ORDER BY create_time DESC")
     List<Book> selectByCategory(Integer categoryId);
 
+    @Select("SELECT COUNT(*) FROM book WHERE category_id = #{categoryId} AND status != 0")
+    int countByCategory(Integer categoryId);
+
     @Select("SELECT * FROM book WHERE seller_id = #{sellerId} AND status != 0 ORDER BY create_time DESC")
     List<Book> selectBySeller(Long sellerId);
 

@@ -55,46 +55,18 @@ const handleLogin = async () => {
 .auth-page {
   display: flex; justify-content: center; align-items: center;
   min-height: calc(100vh - 60px);
-  background: linear-gradient(135deg, #e8ecf4 0%, #dfe3f0 30%, #e4e6f2 70%, #eceff7 100%);
-  position: relative;
-  overflow: hidden;
-}
-.auth-page::before {
-  content: '';
-  position: absolute;
-  top: -30%;
-  right: -10%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(102,126,234,0.08) 0%, transparent 70%);
-  border-radius: 50%;
-}
-.auth-page::after {
-  content: '';
-  position: absolute;
-  bottom: -20%;
-  left: -5%;
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, rgba(118,75,162,0.06) 0%, transparent 70%);
-  border-radius: 50%;
+  background: var(--page-bg);
+  padding: 24px;
 }
 .auth-card {
   width: 420px;
-  border-radius: 16px !important;
-  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.1) !important;
-  backdrop-filter: blur(4px);
-  position: relative;
-  z-index: 1;
+  border-radius: 8px !important;
 }
 .auth-card h2 {
   text-align: center;
   margin-bottom: 24px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-main);
 }
-.switch { text-align: center; font-size: 13px; color: #8890b8; }
-.switch a { color: #667eea; font-weight: 500; }
+.switch { text-align: center; font-size: 13px; color: var(--text-muted); }
+.switch a { color: var(--brand); font-weight: 600; }
 </style>

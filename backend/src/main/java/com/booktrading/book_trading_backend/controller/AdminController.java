@@ -5,10 +5,12 @@ import com.booktrading.book_trading_backend.entity.Announcement;
 import com.booktrading.book_trading_backend.entity.BookCategory;
 import com.booktrading.book_trading_backend.entity.User;
 import com.booktrading.book_trading_backend.mapper.AnnouncementMapper;
+import com.booktrading.book_trading_backend.mapper.BookMapper;
 import com.booktrading.book_trading_backend.mapper.BookCategoryMapper;
 import com.booktrading.book_trading_backend.mapper.OrderMapper;
 import com.booktrading.book_trading_backend.mapper.UserMapper;
 import com.booktrading.book_trading_backend.service.AnnouncementService;
+import com.booktrading.book_trading_backend.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,15 +21,19 @@ import java.util.List;
 public class AdminController {
 
     private final UserMapper userMapper;
+    private final BookMapper bookMapper;
     private final BookCategoryMapper categoryMapper;
     private final OrderMapper orderMapper;
+    private final OrderService orderService;
     private final AnnouncementService announcementService;
 
-    public AdminController(UserMapper userMapper, BookCategoryMapper categoryMapper,
-                           OrderMapper orderMapper, AnnouncementService announcementService) {
+    public AdminController(UserMapper userMapper, BookMapper bookMapper, BookCategoryMapper categoryMapper,
+                           OrderMapper orderMapper, OrderService orderService, AnnouncementService announcementService) {
         this.userMapper = userMapper;
+        this.bookMapper = bookMapper;
         this.categoryMapper = categoryMapper;
         this.orderMapper = orderMapper;
+        this.orderService = orderService;
         this.announcementService = announcementService;
     }
 
@@ -80,6 +86,9 @@ public class AdminController {
     /** 删除分类 */
     @DeleteMapping("/category/{id}")
     public Result<?> deleteCategory(@PathVariable Integer id) {
+        if (bookMapper.countByCategory(id) > 0) {
+            return Result.error(400, "该分类下还有图书，不能删除");
+        }
         categoryMapper.deleteById(id);
         return Result.ok();
     }
@@ -95,8 +104,12 @@ public class AdminController {
     /** 发货（管理员） */
     @PutMapping("/orders/{id}/ship")
     public Result<?> shipOrder(@PathVariable Long id) {
-        orderMapper.updateStatusOnly(id, 2);
-        return Result.ok();
+        try {
+            orderService.adminShip(id);
+            return Result.ok();
+        } catch (RuntimeException e) {
+            return Result.error(400, e.getMessage());
+        }
     }
 
     // ==================== 公告管理 ====================

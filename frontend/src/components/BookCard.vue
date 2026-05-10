@@ -1,7 +1,7 @@
 <template>
   <div class="book-card" @click="goDetail">
     <div class="cover">
-      <img :src="book.coverImage || defaultCover" :alt="book.title" />
+      <img :src="book.coverImage || defaultCover" :alt="book.title" loading="lazy" decoding="async" />
       <span v-if="book.condition" class="tag">{{ condMap[book.condition] }}</span>
     </div>
     <div class="info">
@@ -31,24 +31,24 @@ const goDetail = () => router.push(`/book/${props.book.id}`)
 <style scoped>
 .book-card {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.25s, box-shadow 0.25s;
-  box-shadow: 0 2px 12px rgba(102, 126, 234, 0.06);
-  border: 1px solid rgba(102, 126, 234, 0.05);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(132, 153, 160, 0.22);
 }
 .book-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 28px rgba(102, 126, 234, 0.15);
-  border-color: rgba(102, 126, 234, 0.15);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(47, 111, 95, 0.30);
 }
 .cover {
   position: relative;
   width: 100%;
-  height: 210px;
+  aspect-ratio: 4 / 5;
   overflow: hidden;
-  background: linear-gradient(135deg, #eef0f8 0%, #e4e7f2 100%);
+  background: #eef3f4;
 }
 .cover img {
   width: 100%;
@@ -63,21 +63,21 @@ const goDetail = () => router.push(`/book/${props.book.id}`)
   position: absolute;
   top: 8px;
   right: 8px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: rgba(31, 41, 51, 0.78);
   color: #fff;
   font-size: 12px;
-  padding: 3px 10px;
-  border-radius: 20px;
+  padding: 4px 10px;
+  border-radius: 999px;
   font-weight: 500;
-  box-shadow: 0 2px 8px rgba(118, 75, 162, 0.3);
+  backdrop-filter: blur(6px);
 }
 .info {
-  padding: 14px;
+  padding: 12px 13px 14px;
 }
 .title {
   font-size: 15px;
-  font-weight: 600;
-  color: #2c3e50;
+  font-weight: 700;
+  color: var(--text-main);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -85,7 +85,7 @@ const goDetail = () => router.push(`/book/${props.book.id}`)
 }
 .author {
   font-size: 12px;
-  color: #8890b8;
+  color: var(--text-muted);
   margin-bottom: 10px;
 }
 .bottom {
@@ -96,14 +96,11 @@ const goDetail = () => router.push(`/book/${props.book.id}`)
 .price {
   font-size: 20px;
   font-weight: 700;
-  background: linear-gradient(135deg, #f56565, #ed64a6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--danger);
 }
 .original {
   font-size: 12px;
-  color: #b0b6d1;
+  color: #98a2b3;
   text-decoration: line-through;
 }
 </style>

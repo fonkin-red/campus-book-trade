@@ -24,7 +24,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getAdminOrders, shipOrder } from '@/api'
+import { getAdminOrders, adminShipOrder } from '@/api'
 import { ElMessage } from 'element-plus'
 
 const orders = ref([])
@@ -41,7 +41,7 @@ onMounted(async () => {
 })
 
 const handleShip = async (id) => {
-  await shipOrder(id)
+  await adminShipOrder(id)
   ElMessage.success('已发货')
   const order = orders.value.find(o => o.id === id)
   if (order) order.status = 2

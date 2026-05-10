@@ -76,6 +76,6 @@ public class UserService {
 
     public void updateUser(Long userId, User update) {
         update.setId(userId);
-        userMapper.updateById(update);
+        userMapper.updateProfile(update);
     }
 }

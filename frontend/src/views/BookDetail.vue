@@ -18,6 +18,7 @@
         </div>
       </el-col>
       <el-col :span="14">
+        <section class="detail-panel">
         <h1 class="title">{{ book.title }}</h1>
         <p class="author" v-if="book.author">作者：{{ book.author }}</p>
         <p v-if="book.isbn">ISBN：{{ book.isbn }}</p>
@@ -35,6 +36,7 @@
           </el-button>
         </div>
         <p class="meta">浏览量：{{ book.viewCount }} | 发布于：{{ book.createTime }}</p>
+        </section>
       </el-col>
     </el-row>
     <el-empty v-else description="图书不存在或已下架" />
@@ -124,21 +126,22 @@ const toggleFav = async () => {
 </script>
 
 <style scoped>
-.cover-box { border-radius: 12px; overflow: hidden; background: #f0f2f5; box-shadow: 0 2px 12px rgba(102, 126, 234, 0.08); }
-.carousel-container { position: relative; width: 100%; aspect-ratio: 3 / 4; display: flex; align-items: center; justify-content: center; background: #f0f2f5; }
+.cover-box { border-radius: 8px; overflow: hidden; background: #fff; box-shadow: var(--shadow-sm); border: 1px solid rgba(132, 153, 160, 0.22); }
+.carousel-container { position: relative; width: 100%; aspect-ratio: 3 / 4; display: flex; align-items: center; justify-content: center; background: #f6f8f9; }
 .carousel-image { max-width: 100%; max-height: 100%; }
-.carousel-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 50%; background: rgba(0, 0, 0, 0.45); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; z-index: 2; font-size: 18px; user-select: none; }
-.carousel-arrow:hover { background: rgba(0, 0, 0, 0.7); }
+.carousel-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 50%; background: rgba(31, 41, 51, 0.56); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.2s; z-index: 2; font-size: 18px; user-select: none; }
+.carousel-arrow:hover { background: rgba(31, 41, 51, 0.78); }
 .carousel-arrow-left { left: 8px; }
 .carousel-arrow-right { right: 8px; }
-.carousel-indicator { text-align: center; padding: 10px 0 8px; font-size: 13px; color: #909399; font-weight: 500; }
+.carousel-indicator { text-align: center; padding: 10px 0 8px; font-size: 13px; color: var(--text-muted); font-weight: 600; }
 .fallback-img { width: 100%; display: block; }
-.title { font-size: 22px; margin-bottom: 12px; }
-.author { color: #606266; margin-bottom: 6px; }
+.detail-panel { min-height: 100%; padding: 22px; background: #fff; border: 1px solid rgba(132, 153, 160, 0.22); border-radius: 8px; box-shadow: var(--shadow-sm); }
+.title { font-size: 24px; line-height: 1.35; margin: 0 0 12px; color: var(--text-main); }
+.author { color: var(--text-muted); margin-bottom: 6px; }
 .price-row { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
-.price { font-size: 28px; color: #f56c6c; font-weight: bold; }
-.original { font-size: 14px; color: #c0c4cc; text-decoration: line-through; }
-.desc { margin: 20px 0; padding: 16px; background: #fafafa; border-radius: 10px; line-height: 1.6; }
+.price { font-size: 30px; color: var(--danger); font-weight: 800; }
+.original { font-size: 14px; color: #98a2b3; text-decoration: line-through; }
+.desc { margin: 20px 0; padding: 16px; background: #f6f8f9; border-radius: 8px; line-height: 1.7; color: #334155; }
 .actions { display: flex; gap: 12px; margin: 24px 0; }
-.meta { font-size: 12px; color: #c0c4cc; }
+.meta { font-size: 12px; color: #98a2b3; }
 </style>

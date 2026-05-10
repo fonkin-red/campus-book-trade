@@ -11,9 +11,9 @@
         :default-active="activeMenu"
         router
         :collapse="isCollapse"
-        background-color="#304156"
-        text-color="#bfcbd9"
-        active-text-color="#409EFF"
+        background-color="#ffffff"
+        text-color="#475467"
+        active-text-color="#24584c"
       >
         <el-menu-item index="/admin/orders">
           <el-icon><Document /></el-icon>
@@ -97,13 +97,14 @@ const currentPageTitle = computed(() => {
 <style scoped>
 .admin-layout {
   display: flex;
-  height: 100vh;
+  min-height: calc(100vh - 60px);
 }
 
 /* 侧边栏 */
 .admin-sidebar {
   width: 220px;
-  background: #304156;
+  background: #fff;
+  border-right: 1px solid rgba(132, 153, 160, 0.22);
   transition: width 0.3s;
   flex-shrink: 0;
 }
@@ -116,15 +117,15 @@ const currentPageTitle = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(132, 153, 160, 0.22);
 }
 .logo-text {
-  color: #fff;
+  color: #1f2933;
   font-size: 18px;
   font-weight: bold;
 }
 .logo-text-small {
-  color: #fff;
+  color: #1f2933;
   font-size: 14px;
   font-weight: bold;
 }
@@ -144,7 +145,8 @@ const currentPageTitle = computed(() => {
   display: flex;
   align-items: center;
   padding: 0 20px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  border-bottom: 1px solid rgba(132, 153, 160, 0.22);
+  box-shadow: none;
   flex-shrink: 0;
 }
 .header-left {
@@ -161,7 +163,7 @@ const currentPageTitle = computed(() => {
   color: #666;
 }
 .collapse-btn:hover {
-  color: #409EFF;
+  color: #2f6f5f;
 }
 
 /* 内容区 */
@@ -169,6 +171,19 @@ const currentPageTitle = computed(() => {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-  background: #f0f2f5;
+  background: #f6f8f9;
+}
+
+:deep(.el-menu) {
+  border-right: none;
+}
+
+:deep(.el-menu-item) {
+  margin: 4px 10px;
+  border-radius: 8px;
+}
+
+:deep(.el-menu-item.is-active) {
+  background: #e7f3ef;
 }
 </style>

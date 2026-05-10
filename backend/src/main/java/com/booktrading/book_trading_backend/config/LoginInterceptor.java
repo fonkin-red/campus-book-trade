@@ -38,9 +38,16 @@ public class LoginInterceptor implements HandlerInterceptor {
             return false;
         }
         Claims claims = jwtUtil.parseToken(token);
-        request.setAttribute("userId", claims.get("userId", Long.class));
-        request.setAttribute("username", claims.get("username", String.class));
-        request.setAttribute("role", claims.get("role", Integer.class));
+        Long userId = claims.get("userId", Long.class);
+        String username = claims.get("username", String.class);
+        Integer role = claims.get("role", Integer.class);
+        request.setAttribute("userId", userId);
+        request.setAttribute("username", username);
+        request.setAttribute("role", role);
+        if (pathMatcher.match("/admin/**", request.getRequestURI()) && (role == null || role != 1)) {
+            response.setStatus(403);
+            return false;
+        }
         return true;
     }
 }

@@ -4,6 +4,20 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [vue()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return
+          if (id.includes('@element-plus/icons-vue')) return 'vendor-icons'
+          if (id.includes('element-plus')) return 'vendor-element-plus'
+          if (id.includes('vue') || id.includes('pinia')) return 'vendor-vue'
+          return 'vendor'
+        }
+      }
+    },
+    chunkSizeWarningLimit: 700
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src')

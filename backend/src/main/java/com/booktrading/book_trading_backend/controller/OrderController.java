@@ -34,11 +34,20 @@ public class OrderController {
         return Result.ok(orderService.listByBuyer(userId));
     }
 
+    /** 我卖出的订单 */
+    @GetMapping("/seller/list")
+    public Result<?> sellerList(HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        return Result.ok(orderService.listBySeller(userId));
+    }
+
     /** 订单详情 */
     @GetMapping("/{id}")
-    public Result<?> detail(@PathVariable Long id) {
+    public Result<?> detail(@PathVariable Long id, HttpServletRequest request) {
+        Long userId = (Long) request.getAttribute("userId");
+        Integer role = (Integer) request.getAttribute("role");
         try {
-            return Result.ok(orderService.getById(id));
+            return Result.ok(orderService.getById(id, userId, role));
         } catch (RuntimeException e) {
             return Result.error(404, e.getMessage());
         }

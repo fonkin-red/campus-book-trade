@@ -3,6 +3,7 @@
     <div class="navbar-inner">
       <div class="nav-left">
         <div class="logo" @click="router.push('/')">
+          <span class="logo-mark">书</span>
           <span>校园二手图书</span>
         </div>
         <el-menu :default-active="route.path" mode="horizontal" router :ellipsis="false" class="nav-menu">
@@ -55,13 +56,17 @@ const handleLogout = () => {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid rgba(132, 153, 160, 0.22);
+  backdrop-filter: blur(10px);
 }
 
 .navbar-inner {
   display: flex;
   justify-content: space-between;
-  padding: 0 40px;
+  width: min(1180px, calc(100% - 40px));
+  height: 60px;
+  margin: 0 auto;
 }
 
 .nav-left, .nav-right {
@@ -72,25 +77,27 @@ const handleLogout = () => {
 .nav-menu {
   background: transparent !important;
   border-bottom: none !important;
+  height: 60px;
 }
 
 .nav-menu :deep(.el-menu-item),
 .nav-menu :deep(.el-sub-menu__title) {
-  color: rgba(255, 255, 255, 0.9) !important;
-  font-weight: 500;
+  height: 52px;
+  color: #475467 !important;
+  font-weight: 600;
   border-radius: 8px !important;
   margin: 4px 2px;
 }
 
 .nav-menu :deep(.el-menu-item:hover),
 .nav-menu :deep(.el-sub-menu__title:hover) {
-  background: rgba(255, 255, 255, 0.15) !important;
-  color: #fff !important;
+  background: #e7f3ef !important;
+  color: #24584c !important;
 }
 
 .nav-menu :deep(.el-menu-item.is-active) {
-  background: rgba(255, 255, 255, 0.2) !important;
-  color: #fff !important;
+  background: #e7f3ef !important;
+  color: #24584c !important;
   border-bottom-color: transparent !important;
 }
 
@@ -99,11 +106,35 @@ const handleLogout = () => {
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 18px;
-  font-weight: bold;
-  color: #fff;
+  font-weight: 800;
+  color: #1f2933;
   cursor: pointer;
   padding: 0 20px 0 0;
   user-select: none;
+}
+
+.logo-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 16px;
+  background: #2f6f5f;
+  box-shadow: 0 8px 20px rgba(47, 111, 95, 0.18);
+}
+
+@media (max-width: 760px) {
+  .navbar-inner {
+    width: calc(100% - 24px);
+  }
+  .logo span:last-child {
+    display: none;
+  }
 }
 </style>

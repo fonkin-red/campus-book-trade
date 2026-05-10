@@ -1,6 +1,11 @@
 <template>
   <div class="page-container">
-    <h2>我的购物车</h2>
+    <div class="page-heading">
+      <div>
+        <h2>我的购物车</h2>
+        <p>确认想要购买的图书，统一填写交付信息后提交订单。</p>
+      </div>
+    </div>
 
     <!-- 空购物车 -->
     <el-empty v-if="!cartItems.length" description="购物车还是空的，快去逛逛吧" />
@@ -20,10 +25,11 @@
           <el-image
             v-if="item.cover"
             :src="item.cover"
-            style="width: 80px; height: 100px; border-radius: 6px; object-fit: cover"
+            class="cart-cover"
             fit="cover"
+            lazy
           />
-          <div v-else style="width: 80px; height: 100px; background: #f0f0f0; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px">
+          <div v-else class="cart-cover placeholder">
             暂无封面
           </div>
           <div class="book-detail">
@@ -60,17 +66,42 @@
         </el-button>
       </div>
     </div>
+
+    <el-dialog v-model="checkoutVisible" title="填写交付信息" width="420px">
+      <el-form :model="checkoutForm" label-width="90px">
+        <el-form-item label="联系方式" required>
+          <el-input v-model="checkoutForm.contactInfo" placeholder="手机号 / 微信号" />
+        </el-form-item>
+        <el-form-item label="交付地址" required>
+          <el-input v-model="checkoutForm.deliveryAddress" placeholder="宿舍楼 / 教学楼 / 校内地点" />
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input v-model="checkoutForm.remark" type="textarea" :rows="3" placeholder="可填写交易时间、其他说明" />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="checkoutVisible = false">取消</el-button>
+        <el-button type="primary" :loading="checkingOut" @click="confirmCheckout">提交订单</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getCart, updateCartItem, removeCartItem, createOrder } from '@/api'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 const router = useRouter()
 const cartItems = ref([])
+const checkoutVisible = ref(false)
+const checkingOut = ref(false)
+const checkoutForm = reactive({
+  contactInfo: '',
+  deliveryAddress: '',
+  remark: ''
+})
 
 // ===== 数据加载 =====
 const loadCart = async () => {
@@ -151,11 +182,24 @@ const handleCheckout = async () => {
     ElMessage.warning('请先选择要购买的商品')
     return
   }
+  checkoutVisible.value = true
+}
+
+const confirmCheckout = async () => {
+  const selected = cartItems.value.filter(item => item.selected === 1)
+  if (!checkoutForm.contactInfo.trim() || !checkoutForm.deliveryAddress.trim()) {
+    ElMessage.warning('请填写联系方式和交付地址')
+    return
+  }
+  checkingOut.value = true
   try {
     for (const item of selected) {
       await createOrder({
         bookId: item.bookId,
-        quantity: item.quantity
+        quantity: item.quantity,
+        contactInfo: checkoutForm.contactInfo.trim(),
+        deliveryAddress: checkoutForm.deliveryAddress.trim(),
+        remark: checkoutForm.remark.trim()
       })
     }
     
@@ -164,33 +208,51 @@ const handleCheckout = async () => {
     }
   
     ElMessage.success('下单成功')
+    checkoutVisible.value = false
     router.push('/orders')
   } catch {
     ElMessage.error('下单失败，请重试')
+  } finally {
+    checkingOut.value = false
   }
 }
 </script>
 
 <style scoped>
 .page-container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 30px 20px;
+  max-width: 980px;
 }
 
-h2 {
-  margin-bottom: 24px;
+.page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 18px;
+}
+
+.page-heading h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  color: var(--text-main);
+}
+
+.page-heading p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
 }
 
 .cart-container {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
+  background: var(--surface);
+  border: 1px solid rgba(132, 153, 160, 0.22);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 18px;
 }
 
 .cart-header {
   padding-bottom: 12px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--line);
 }
 
 .cart-item {
@@ -198,7 +260,7 @@ h2 {
   align-items: center;
   gap: 16px;
   padding: 16px 0;
-  border-bottom: 1px solid #f5f5f5;
+  border-bottom: 1px solid #edf1f2;
 }
 
 .cart-book-info {
@@ -209,15 +271,34 @@ h2 {
   cursor: pointer;
 }
 
+.cart-cover {
+  width: 80px;
+  height: 100px;
+  border-radius: var(--radius);
+  background: #eef3f4;
+  object-fit: cover;
+  flex: 0 0 auto;
+}
+
+.cart-cover.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
 .book-title {
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 700;
   margin-bottom: 8px;
+  color: var(--text-main);
 }
 
 .book-price {
-  color: #e74c3c;
+  color: var(--danger);
   font-size: 14px;
+  font-weight: 700;
 }
 
 .cart-quantity {
@@ -229,7 +310,7 @@ h2 {
   flex: 1;
   text-align: center;
   font-weight: bold;
-  color: #e74c3c;
+  color: var(--danger);
 }
 
 .cart-footer {
@@ -239,7 +320,7 @@ h2 {
   gap: 20px;
   margin-top: 20px;
   padding-top: 16px;
-  border-top: 2px solid #eee;
+  border-top: 1px solid var(--line);
 }
 
 .total-text {
@@ -248,6 +329,27 @@ h2 {
 
 .total-price {
   font-size: 20px;
-  color: #e74c3c;
+  color: var(--danger);
+}
+
+@media (max-width: 720px) {
+  .cart-item {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .cart-book-info {
+    min-width: calc(100% - 40px);
+  }
+
+  .cart-quantity,
+  .cart-subtotal {
+    text-align: left;
+  }
+
+  .cart-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
 }
 </style>

@@ -1,5 +1,13 @@
 <template>
   <div class="page-container">
+    <section class="home-toolbar">
+      <div>
+        <h1>校园图书集市</h1>
+        <p>按分类快速筛选，找到正在出售的教材、考研资料和闲置书。</p>
+      </div>
+      <el-button type="primary" @click="$router.push('/publish')">发布图书</el-button>
+    </section>
+
     <!-- ========== 公告区域 ========== -->
     <div class="announcement-bar" v-if="announcements.length" @click.stop>
       <el-icon class="announce-icon"><Bell /></el-icon>
@@ -90,11 +98,12 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #fdf6ec;
-  border: 1px solid #faecd8;
+  background: #fff8ed;
+  border: 1px solid #f6d7a8;
   border-radius: 8px;
-  padding: 8px 20px;
+  padding: 10px 16px;
   margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
 }
 .announce-icon {
   font-size: 20px;
@@ -109,18 +118,55 @@ onMounted(async () => {
   font-size: 14px;
 }
 
+.home-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding: 18px 20px;
+  background: #fff;
+  border: 1px solid rgba(132, 153, 160, 0.22);
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.home-toolbar h1 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.3;
+}
+
+.home-toolbar p {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
 /* 搜索栏 */
 .search-bar {
   display: flex;
   gap: 12px;
   margin-bottom: 24px;
   flex-wrap: wrap;
+  padding: 14px;
+  background: #fff;
+  border: 1px solid rgba(132, 153, 160, 0.22);
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
 }
 
 /* 图书网格 */
 .book-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 18px;
+}
+
+@media (max-width: 720px) {
+  .home-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
 </style>

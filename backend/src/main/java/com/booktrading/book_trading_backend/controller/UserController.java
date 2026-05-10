@@ -39,10 +39,6 @@ public class UserController {
     @PutMapping("/info")
     public Result<?> updateInfo(@RequestBody User update, HttpServletRequest request) {
         Long userId = (Long) request.getAttribute("userId");
-        // 防止篡改敏感字段
-        update.setRole(null);
-        update.setStatus(null);
-        update.setPassword(null);
         userService.updateUser(userId, update);
         return Result.ok();
     }

@@ -1,6 +1,16 @@
 <template>
   <div class="page-container" v-loading="loading">
-    <h2>我的订单</h2>
+    <div class="page-heading">
+      <div>
+        <h2>我的订单</h2>
+        <p>查看买入和卖出的订单状态，处理付款、发货和收货确认。</p>
+      </div>
+    </div>
+
+    <el-radio-group v-model="orderType" class="order-switch" @change="fetchOrders">
+      <el-radio-button label="buyer">我买到的</el-radio-button>
+      <el-radio-button label="seller">我卖出的</el-radio-button>
+    </el-radio-group>
 
     <el-tabs v-model="activeTab" @tab-change="fetchOrders">
       <el-tab-pane label="全部" name="all" />
@@ -26,9 +36,9 @@
         <div class="order-footer">
           <span class="order-time">{{ order.createTime }}</span>
           <div class="order-actions">
-            <el-button v-if="order.status === 0" type="primary" size="small" @click="handlePay(order.id)">付款</el-button>
-            <el-button v-if="order.status === 1 && isSeller(order)" type="primary" size="small" @click="handleShip(order.id)">发货</el-button>
-            <el-button v-if="order.status === 2" type="success" size="small" @click="handleConfirm(order.id)">确认收货</el-button>
+            <el-button v-if="orderType === 'buyer' && order.status === 0" type="primary" size="small" @click="handlePay(order.id)">付款</el-button>
+            <el-button v-if="orderType === 'seller' && order.status === 1" type="primary" size="small" @click="handleShip(order.id)">发货</el-button>
+            <el-button v-if="orderType === 'buyer' && order.status === 2" type="success" size="small" @click="handleConfirm(order.id)">确认收货</el-button>
             <el-button v-if="order.status < 3" size="small" @click="handleCancel(order.id)">取消</el-button>
           </div>
         </div>
@@ -39,14 +49,13 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { getOrders, payOrder, confirmOrder, cancelOrder, shipOrder } from '@/api'
+import { getOrders, getSellerOrders, payOrder, confirmOrder, cancelOrder, shipOrder } from '@/api'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { useUserStore } from '@/stores/user'
 
-const userStore = useUserStore()
 const orders = ref([])
 const loading = ref(false)
 const activeTab = ref('all')
+const orderType = ref('buyer')
 
 const statusText = { 0: '待付款', 1: '待发货', 2: '待收货', 3: '已完成', 4: '已取消' }
 const statusType = { 0: 'warning', 1: 'info', 2: '', 3: 'success', 4: 'info' }
@@ -56,12 +65,10 @@ const filteredOrders = computed(() => {
   return orders.value.filter(o => o.status === Number(activeTab.value))
 })
 
-const isSeller = (order) => order.sellerId === userStore.user.id
-
 const fetchOrders = async () => {
   loading.value = true
   try {
-    const res = await getOrders()
+    const res = orderType.value === 'seller' ? await getSellerOrders() : await getOrders()
     orders.value = res.data || []
   } finally { loading.value = false }
 }
@@ -104,15 +111,103 @@ const handleCancel = async (id) => {
 </script>
 
 <style scoped>
-.page-container { max-width: 900px; margin: 0 auto; padding: 30px 20px; }
-h2 { margin-bottom: 20px; }
-.order-card { margin-bottom: 16px; }
-.order-header { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px; color: #909399; }
-.order-body { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
-.book-title { font-size: 15px; font-weight: 500; flex: 1; }
-.order-price { color: #e74c3c; font-weight: bold; font-size: 16px; }
-.order-qty { color: #909399; }
-.order-footer { display: flex; justify-content: space-between; align-items: center; }
-.order-time { font-size: 12px; color: #c0c4cc; }
-.order-actions { display: flex; gap: 8px; }
+.page-container {
+  max-width: 980px;
+}
+
+.page-heading {
+  margin-bottom: 18px;
+}
+
+.page-heading h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  color: var(--text-main);
+}
+
+.page-heading p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.order-switch {
+  margin-bottom: 14px;
+}
+
+.order-list {
+  display: grid;
+  gap: 14px;
+}
+
+.order-card {
+  margin-bottom: 0;
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.order-body {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+  padding: 12px;
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+}
+
+.book-title {
+  font-size: 15px;
+  font-weight: 700;
+  flex: 1;
+  color: var(--text-main);
+}
+
+.order-price {
+  color: var(--danger);
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.order-qty {
+  color: var(--text-muted);
+}
+
+.order-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.order-time {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.order-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+@media (max-width: 720px) {
+  .order-body,
+  .order-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .order-actions {
+    justify-content: flex-start;
+  }
+}
 </style>

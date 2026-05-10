@@ -6,6 +6,7 @@ import com.booktrading.book_trading_backend.dto.OrderRequest;
 import com.booktrading.book_trading_backend.mapper.BookMapper;
 import com.booktrading.book_trading_backend.mapper.OrderMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ public class OrderService {
     }
 
     /** 创建订单 */
+    @Transactional
     public OrderInfo create(OrderRequest req, Long buyerId) {
         Book book = bookMapper.selectById(req.getBookId());
         if (book == null || book.getStatus() != 1) {
@@ -50,10 +52,6 @@ public class OrderService {
         order.setStatus(0); // 待付款
         orderMapper.insert(order);
 
-        // 将图书状态改为已售出
-        book.setStatus(2);
-        bookMapper.updateById(book);
-
         return order;
     }
 
@@ -68,15 +66,20 @@ public class OrderService {
     }
 
     /** 订单详情 */
-    public OrderInfo getById(Long id) {
+    public OrderInfo getById(Long id, Long userId, Integer role) {
         OrderInfo order = orderMapper.selectById(id);
         if (order == null) {
             throw new RuntimeException("订单不存在");
+        }
+        boolean isAdmin = role != null && role == 1;
+        if (!isAdmin && !order.getBuyerId().equals(userId) && !order.getSellerId().equals(userId)) {
+            throw new RuntimeException("无权查看该订单");
         }
         return order;
     }
 
     /** 付款 */
+    @Transactional
     public void pay(Long id, Long buyerId) {
         OrderInfo order = orderMapper.selectById(id);
         if (order == null || !order.getBuyerId().equals(buyerId)) {
@@ -85,9 +88,15 @@ public class OrderService {
         if (order.getStatus() != 0) {
             throw new RuntimeException("订单状态不允许付款");
         }
+        Book book = bookMapper.selectById(order.getBookId());
+        if (book == null || book.getStatus() != 1) {
+            throw new RuntimeException("图书不存在或已下架");
+        }
         order.setStatus(1);
         order.setPaymentTime(LocalDateTime.now());
         orderMapper.updateStatus(order);
+        book.setStatus(2);
+        bookMapper.updateById(book);
     }
 
     /** 发货 */
@@ -118,6 +127,7 @@ public class OrderService {
     }
 
     /** 取消订单 */
+    @Transactional
     public void cancel(Long id, Long userId) {
         OrderInfo order = orderMapper.selectById(id);
         if (order == null || (!order.getBuyerId().equals(userId) && !order.getSellerId().equals(userId))) {
@@ -126,15 +136,29 @@ public class OrderService {
         if (order.getStatus() >= 3) {
             throw new RuntimeException("订单已完成，无法取消");
         }
+        Integer oldStatus = order.getStatus();
         order.setStatus(4);
         orderMapper.updateStatus(order);
 
-        // 恢复图书为在售状态
+        // 已付款或已发货的订单取消时，恢复图书为在售状态
         Book book = bookMapper.selectById(order.getBookId());
-        if (book != null && book.getStatus() == 2) {
+        if (oldStatus != null && oldStatus >= 1 && book != null && book.getStatus() == 2) {
             book.setStatus(1);
             bookMapper.updateById(book);
         }
+    }
+
+    /** 管理员发货 */
+    public void adminShip(Long id) {
+        OrderInfo order = orderMapper.selectById(id);
+        if (order == null) {
+            throw new RuntimeException("订单不存在");
+        }
+        if (order.getStatus() != 1) {
+            throw new RuntimeException("订单状态不允许发货");
+        }
+        order.setStatus(2);
+        orderMapper.updateStatus(order);
     }
 
     /** 管理员：获取全部订单 */
