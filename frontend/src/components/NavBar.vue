@@ -38,6 +38,7 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { User } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()

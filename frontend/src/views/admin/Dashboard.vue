@@ -8,12 +8,12 @@
       </div>
 
       <el-menu
-          :default-active="activeMenu"
-          router
-          :collapse="isCollapse"
-          background-color="#304156"
-          text-color="#bfcbd9"
-          active-text-color="#409EFF"
+        :default-active="activeMenu"
+        router
+        :collapse="isCollapse"
+        background-color="#304156"
+        text-color="#bfcbd9"
+        active-text-color="#409EFF"
       >
         <el-menu-item index="/admin/orders">
           <el-icon><Document /></el-icon>
@@ -36,7 +36,7 @@
 
     <!-- 右侧区域 -->
     <div class="admin-right">
-      <!-- 顶部 Header -->
+      <!-- 顶部 Header（仅保留标题和折叠按钮） -->
       <div class="admin-header">
         <div class="header-left">
           <el-icon class="collapse-btn" @click="isCollapse = !isCollapse" :size="20">
@@ -45,21 +45,9 @@
           </el-icon>
           <span class="header-title">{{ currentPageTitle }}</span>
         </div>
-        <el-dropdown trigger="click">
-          <span class="user-info">
-            {{ username }}
-            <el-icon><ArrowDown /></el-icon>
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item @click="$router.push('/')">返回前台</el-dropdown-item>
-              <el-dropdown-item divided @click="handleLogout">退出登录</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
       </div>
 
-      <!-- ========== 子路由渲染区域 ========== -->
+      <!-- 子路由渲染区域 -->
       <div class="admin-content">
         <router-view />
       </div>
@@ -69,21 +57,26 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { ElMessageBox } from 'element-plus'
+import { useRoute } from 'vue-router'
 import {
   Document, User, Grid, Bell,
-  Fold, Expand, ArrowDown
+  Fold, Expand
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
-const router = useRouter()
 
 const isCollapse = ref(false)
-const username = ref(localStorage.getItem('username') || '管理员')
 
 // 侧边栏当前激活菜单
-const activeMenu = computed(() => route.path)
+const activeMenu = computed(() => {
+  const path = route.path
+  // 精确匹配子路由路径
+  if (path.startsWith('/admin/orders')) return '/admin/orders'
+  if (path.startsWith('/admin/users')) return '/admin/users'
+  if (path.startsWith('/admin/categories')) return '/admin/categories'
+  if (path.startsWith('/admin/announcements')) return '/admin/announcements'
+  return path
+})
 
 // 当前页面标题
 const currentPageTitle = computed(() => {
@@ -93,18 +86,12 @@ const currentPageTitle = computed(() => {
     '/admin/categories': '分类管理',
     '/admin/announcements': '公告管理'
   }
-  return map[route.path] || '管理后台'
+  // 遍历找到匹配的
+  for (const [key, value] of Object.entries(map)) {
+    if (route.path.startsWith(key)) return value
+  }
+  return '管理后台'
 })
-
-// 退出登录
-const handleLogout = async () => {
-  try {
-    await ElMessageBox.confirm('确定要退出登录吗？', '提示', { type: 'warning' })
-    localStorage.removeItem('token')
-    localStorage.removeItem('username')
-    router.push('/login')
-  } catch {}
-}
 </script>
 
 <style scoped>
@@ -156,7 +143,6 @@ const handleLogout = async () => {
   background: #fff;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 0 20px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   flex-shrink: 0;
@@ -176,17 +162,6 @@ const handleLogout = async () => {
 }
 .collapse-btn:hover {
   color: #409EFF;
-}
-.user-info {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 8px;
-  border-radius: 4px;
-}
-.user-info:hover {
-  background: #f5f5f5;
 }
 
 /* 内容区 */

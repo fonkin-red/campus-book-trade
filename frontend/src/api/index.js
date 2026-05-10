@@ -32,12 +32,14 @@ export const cancelOrder = (id) => request.put(`/order/${id}/cancel`)
 
 // ===== 收藏相关 =====
 export const getFavorites = () => request.get('/favorite')
-export const checkFavorite = (bookId) => request.get(`/favorite/check/${bookId}`)
 export const addFavorite = (bookId) => request.post(`/favorite/${bookId}`)
 export const removeFavorite = (bookId) => request.delete(`/favorite/${bookId}`)
 
 // ===== 公告相关 =====
-export const getAnnouncements = () => request.get('/announcement/list')
+export const getAnnouncements = () => request.get('/admin/announcements')
+export const publishAnnouncement = (data) => request.post('/admin/announcement', data)
+export const updateAnnouncement = (id, data) => request.put(`/admin/announcement/${id}`, data)
+export const deleteAnnouncement = (id) => request.delete(`/admin/announcement/${id}`)
 
 // ===== 文件上传 =====
 export const uploadFile = (file, onProgress) => {
@@ -61,6 +63,4 @@ export const updateCategory = (id, data) => request.put(`/admin/category/${id}`,
 export const deleteCategory = (id) => request.delete(`/admin/category/${id}`)
 export const getAdminOrders = (params) => request.get('/admin/orders', { params })
 export const shipOrder = (id) => request.put(`/order/${id}/ship`)
-export const publishAnnouncement = (data) => request.post('/admin/announcement', data)
-export const updateAnnouncement = (id, data) => request.put(`/admin/announcement/${id}`, data)
-export const deleteAnnouncement = (id) => request.delete(`/admin/announcement/${id}`)
+// 公告相关已在上面声明，这里删除重复的即可
