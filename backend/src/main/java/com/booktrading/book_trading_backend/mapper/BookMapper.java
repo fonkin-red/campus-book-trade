@@ -17,8 +17,14 @@ public interface BookMapper {
     @Select("SELECT * FROM book WHERE status = 1 ORDER BY create_time DESC")
     List<Book> selectAllOnSale();
 
+    @Select("SELECT * FROM book WHERE status = 1 ORDER BY create_time DESC LIMIT #{limit} OFFSET #{offset}")
+    List<Book> selectAllOnSalePage(@Param("offset") int offset, @Param("limit") int limit);
+
     @Select("SELECT * FROM book WHERE category_id = #{categoryId} AND status = 1 ORDER BY create_time DESC")
     List<Book> selectByCategory(Integer categoryId);
+
+    @Select("SELECT * FROM book WHERE category_id = #{categoryId} AND status = 1 ORDER BY create_time DESC LIMIT #{limit} OFFSET #{offset}")
+    List<Book> selectByCategoryPage(@Param("categoryId") Integer categoryId, @Param("offset") int offset, @Param("limit") int limit);
 
     @Select("SELECT COUNT(*) FROM book WHERE category_id = #{categoryId} AND status != 0")
     int countByCategory(Integer categoryId);

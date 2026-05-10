@@ -5,7 +5,8 @@
         <div class="cover-box">
           <div class="carousel-container" v-if="allImages.length">
             <el-image :src="currentImage" fit="contain" class="carousel-image"
-              :preview-src-list="allImages" hide-on-click-modal preview-teleported />
+              :preview-src-list="allImages" :initial-index="currentIndex"
+              hide-on-click-modal preview-teleported />
             <div class="carousel-arrow carousel-arrow-left" @click="prevImage">
               <el-icon><ArrowLeft /></el-icon>
             </div>

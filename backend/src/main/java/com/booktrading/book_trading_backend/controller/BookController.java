@@ -20,11 +20,13 @@ public class BookController {
     @GetMapping("/list")
     public Result<?> list(@RequestParam(required = false) Integer categoryId,
                           @RequestParam(required = false) Long sellerId,
+                          @RequestParam(required = false) Integer page,
+                          @RequestParam(required = false) Integer pageSize,
                           HttpServletRequest request) {
         if (sellerId != null) {
             return Result.ok(bookService.listBySeller(sellerId));
         }
-        return Result.ok(bookService.list(categoryId, 1, 20));
+        return Result.ok(bookService.list(categoryId, page, pageSize));
     }
 
     @GetMapping("/search")

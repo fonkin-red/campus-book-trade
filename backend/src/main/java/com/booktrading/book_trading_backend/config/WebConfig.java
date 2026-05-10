@@ -43,8 +43,6 @@ public class WebConfig implements WebMvcConfigurer {
                         "/category/**",
                         "/announcement/**",
                         "/uploads/**",
-                        "/announcement/list",
-                        "/announcement/**",
                         "/error"
 
                 );

@@ -38,11 +38,13 @@ public class BookService {
     }
 
     public List<Book> list(Integer categoryId, Integer page, Integer pageSize) {
-        // 简单分页：mapper 层暂不写 LIMIT，先全量返回，后续优化
+        int safePage = page != null && page > 0 ? page : 1;
+        int safePageSize = pageSize != null && pageSize > 0 ? Math.min(pageSize, 50) : 20;
+        int offset = (safePage - 1) * safePageSize;
         if (categoryId != null) {
-            return bookMapper.selectByCategory(categoryId);
+            return bookMapper.selectByCategoryPage(categoryId, offset, safePageSize);
         }
-        return bookMapper.selectAllOnSale();
+        return bookMapper.selectAllOnSalePage(offset, safePageSize);
     }
 
     public List<Book> search(String keyword) {

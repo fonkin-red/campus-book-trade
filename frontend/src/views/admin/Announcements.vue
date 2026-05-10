@@ -88,8 +88,8 @@ const load = async () => {
   try {
     const res = await getAnnouncements()
     announcements.value = res?.data || res || []
-  } catch (error) {
-    console.error('加载失败', error)
+  } catch {
+    ElMessage.error('加载公告失败')
   } finally {
     loading.value = false
   }

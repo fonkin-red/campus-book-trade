@@ -3,8 +3,17 @@ import { ref, computed } from 'vue'
 import { getToken, setToken, removeToken, setUser, removeUser } from '@/utils/auth'
 
 export const useUserStore = defineStore('user', () => {
+  const readStoredUser = () => {
+    try {
+      return JSON.parse(localStorage.getItem('user') || '{}')
+    } catch {
+      removeUser()
+      return {}
+    }
+  }
+
   const token = ref(getToken() || '')
-  const user = ref(JSON.parse(localStorage.getItem('user') || '{}'))
+  const user = ref(readStoredUser())
 
   const isLoggedIn = computed(() => !!token.value)
   const isAdmin = computed(() => user.value.role === 1)

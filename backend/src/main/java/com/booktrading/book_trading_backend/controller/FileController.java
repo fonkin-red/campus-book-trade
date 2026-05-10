@@ -23,7 +23,9 @@ public class FileController {
     private static final Logger log = LoggerFactory.getLogger(FileController.class);
 
     private static final Pattern SAFE_FILENAME = Pattern.compile(
-            "^[0-9a-fA-F-]+\\\\.(jpg|jpeg|png|gif|webp|bmp)$");
+            "^[0-9a-fA-F-]+\\.(jpg|jpeg|png|gif|webp|bmp)$");
+    private static final Pattern SAFE_IMAGE_EXT = Pattern.compile(
+            "\\.(jpg|jpeg|png|gif|webp|bmp)$", Pattern.CASE_INSENSITIVE);
 
     @Value("${file.upload-dir:uploads}")
     private String uploadDir;
@@ -31,9 +33,19 @@ public class FileController {
     @PostMapping("/upload")
     public Result<?> upload(@RequestParam("file") MultipartFile file) {
         try {
+            if (file.isEmpty()) {
+                return Result.error(400, "请选择要上传的文件");
+            }
+            String contentType = file.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                return Result.error(400, "只能上传图片文件");
+            }
             String originalName = file.getOriginalFilename();
             String ext = originalName != null && originalName.contains(".")
-                    ? originalName.substring(originalName.lastIndexOf(".")) : ".jpg";
+                    ? originalName.substring(originalName.lastIndexOf(".")).toLowerCase() : ".jpg";
+            if (!SAFE_IMAGE_EXT.matcher(ext).matches()) {
+                return Result.error(400, "不支持的图片格式");
+            }
             String fileName = UUID.randomUUID() + ext;
 
             Path destDir = Paths.get(uploadDir).toAbsolutePath().normalize();

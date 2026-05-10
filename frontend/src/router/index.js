@@ -98,7 +98,12 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
-  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  let user = {}
+  try {
+    user = JSON.parse(localStorage.getItem('user') || '{}')
+  } catch {
+    localStorage.removeItem('user')
+  }
   if (to.meta.requiresAuth && !token) {
     ElMessage.warning('请先登录')
     next('/login')

@@ -66,7 +66,7 @@ const categories = ref([])
 const announcements = ref([])
 
 const fetchBooks = async () => {
-  const res = await getBookList({ categoryId: categoryId.value || undefined })
+  const res = await getBookList({ categoryId: categoryId.value || undefined, page: 1, pageSize: 24 })
   books.value = res.data || []
 }
 
@@ -86,9 +86,7 @@ onMounted(async () => {
   try {
     const annRes = await getPublicAnnouncements()
     announcements.value = annRes?.data || annRes || []
-  } catch (e) {
-    console.error('获取公告失败', e)
-  }
+  } catch {}
 })
 </script>
 

@@ -87,7 +87,7 @@ import { getUserInfo, updateUser, getBookList, deleteBook as delBookApi } from '
 import { useUserStore } from '@/stores/user'
 
 const userStore = useUserStore()
-const profile = reactive({ username: '', nickname: '', phone: '', email: '' })
+const profile = reactive({ id: null, username: '', nickname: '', phone: '', email: '' })
 const myBooks = ref([])
 const saving = ref(false)
 const bookLoading = ref(true)
@@ -98,7 +98,9 @@ onMounted(async () => {
     Object.assign(profile, res.data)
   } catch {}
   try {
-    const res = await getBookList({ sellerId: userStore.user.id })
+    const sellerId = profile.id || userStore.user.id
+    if (!sellerId) return
+    const res = await getBookList({ sellerId })
     myBooks.value = res.data || []
   } finally { bookLoading.value = false }
 })
