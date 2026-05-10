@@ -80,7 +80,11 @@ const handleShip = async (id) => {
 }
 const handleConfirm = async (id) => {
   try {
-    await ElMessageBox.confirm('确认已收到货？', '提示', { type: 'warning' })
+    await ElMessageBox.confirm('确认已收到货？', '提示', {
+      confirmButtonText: '确认收货',
+      cancelButtonText: '取消',        
+      type: 'warning'
+    })
   } catch { return }
   await confirmOrder(id)
   ElMessage.success('已确认收货')
@@ -88,7 +92,10 @@ const handleConfirm = async (id) => {
 }
 const handleCancel = async (id) => {
   try {
-    await ElMessageBox.confirm('确定取消订单？', '提示', { type: 'warning' })
+    await ElMessageBox.confirm('确定取消订单？', '提示', {
+      confirmButtonText: '确定取消',
+      cancelButtonText: '我再想想',    
+    })
   } catch { return }
   await cancelOrder(id)
   ElMessage.success('已取消')

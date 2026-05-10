@@ -34,12 +34,13 @@ export const cancelOrder = (id) => request.put(`/order/${id}/cancel`)
 export const getFavorites = () => request.get('/favorite')
 export const addFavorite = (bookId) => request.post(`/favorite/${bookId}`)
 export const removeFavorite = (bookId) => request.delete(`/favorite/${bookId}`)
-
+export const checkFavorite = (bookId) => request.get(`/favorite/check/${bookId}`)
 // ===== 公告相关 =====
 export const getAnnouncements = () => request.get('/admin/announcements')
 export const publishAnnouncement = (data) => request.post('/admin/announcement', data)
 export const updateAnnouncement = (id, data) => request.put(`/admin/announcement/${id}`, data)
 export const deleteAnnouncement = (id) => request.delete(`/admin/announcement/${id}`)
+export const getPublicAnnouncements = () => request.get('/announcement/list')
 
 // ===== 文件上传 =====
 export const uploadFile = (file, onProgress) => {
